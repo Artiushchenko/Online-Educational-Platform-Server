@@ -2,13 +2,90 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function getUser(): JsonResponse
+    public function index(Request $request)
     {
-        return response()->json(Auth::user());
+        $search = $request->input('search');
+
+        $users = User::with('role')
+            ->select('id', 'name', 'role_id', 'email')
+            ->when($search, function ($query, $search) {
+                return $query->where('email', 'like', '%' . $search . '%');
+            })
+            ->get();
+
+        return view('admin.show.users', ['users' => $users, 'search' => $search]);
+    }
+
+    public function create()
+    {
+        return view('admin.create.user');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $role = Role::where('name', 'student')->first();
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role_id' => $role->id,
+        ]);
+
+        return redirect()->route('admin.getUsers');
+    }
+
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+
+        $roles = Role::all();
+
+        return view('admin.edit.user', ['user' => $user, 'roles' => $roles]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:8',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if ($validated['password']) {
+            $user->password = Hash::make($validated['password']);
+        }
+        $user->role_id = $validated['role_id'];
+
+        $user->save();
+
+        return redirect()->route('admin.getUsers');
+    }
+
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->delete();
+
+        return redirect()->route('admin.getUsers');
     }
 }

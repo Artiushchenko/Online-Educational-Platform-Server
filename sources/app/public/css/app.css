@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+* {
+    font-family: 'JetBrains Mono', monospace;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: #FFFFFF;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    padding: 20px;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: rgb(30, 30, 30);
+}
+
+header, main {
+    background-color: rgb(50, 50, 50);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+header {
+    flex-shrink: 0;
+}
+
+header > nav > ul {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+header > nav > ul > li {
+    list-style-type: none;
+}
+
+header > nav > ul > li > a {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+main {
+    flex-grow: 1;
+}
+
+main > div {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+td, th {
+    border: 2px solid rgb(100, 100, 100);
+    padding: 5px 0;
+}
+
+.dashboard {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.dashboard > .stat-card {
+    height: 150px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(100, 100, 100);
+}
+
+.dashboard > .stat-card > p {
+    font-size: 50px;
+    font-weight: 600;
+}
+
+.dashboard > .stat-card > h3 {
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+button {
+    cursor: pointer;
+    padding: 5px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    background-color: #0000FF;
+    color: #FFFFFF;
+    transition: 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #000080;
+}
+
+.remove-button {
+    background-color: #FF0000;
+}
+
+.remove-button:hover {
+    background-color: #8B0000;
+}
+
+.search-part {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-part > button {
+    width: 15%;
+    padding: 10px 0;
+}
+
+.search-part > form > input {
+    padding: 10px;
+    border-radius: 12px;
+    outline: none;
+    background-color: transparent;
+    border: 2px solid rgb(100, 100, 100);
+}
+
+.search-part > form > button {
+    padding: 10px 20px;
+}
+
+.search-part > form > a {
+    text-decoration: none;
+    background-color: #FF0000;
+    border-radius: 12px;
+    padding: 10px 20px;
+    transition: 0.3s ease-in-out;
+    font-size: 14px;
+}
+
+.search-part > form > a:hover {
+    background-color: #8B0000;
+}
+
+.edit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border: 2px solid rgb(100, 100, 100);
+    width: max-content;
+
+}
+
+.edit > .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group > label {
+    font-size: 14px;
+}
+
+.form-group > input {
+    padding: 5px 10px;
+    background-color: transparent;
+    outline: none;
+    border: 2px solid rgb(100, 100, 100);
+    border-radius: 12px;
+}
+
+.form-group > select {
+    background-color: transparent;
+    outline: none;
+}
+
+.form-group > select > option {
+    background-color: rgb(50, 50, 50);
+}

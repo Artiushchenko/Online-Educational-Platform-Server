@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default defineConfig({
     plugins: [
@@ -8,4 +11,7 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    define: {
+        'process.env': process.env
+    }
 });
