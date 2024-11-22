@@ -42,7 +42,12 @@
                 </li>
 
                 <li>
-                    <a href="/logout">Logout</a>
+                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 16px;">
+                            Logout
+                        </button>
+                    </form>
                 </li>
             </ul>
         </nav>

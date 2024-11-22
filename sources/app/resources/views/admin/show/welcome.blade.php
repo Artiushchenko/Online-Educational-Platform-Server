@@ -3,7 +3,7 @@
 @section('title', 'Welcome')
 
 @section('content')
-<div>
-    <p>Welcome back, user!</p>
+<div class="welcome-page">
+    <p>🤩 Nice to see you, dear <span>{{ Auth::user()->name }}</span>! 👋</p>
 </div>
 @endsection
