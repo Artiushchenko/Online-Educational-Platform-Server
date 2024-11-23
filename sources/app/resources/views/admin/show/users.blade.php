@@ -11,7 +11,7 @@
                 <input
                     type="text"
                     name="search"
-                    placeholder="Search by user e-mail..."
+                    placeholder="User e-mail..."
                     value="{{ $search ?? '' }}"
                 >
                 <button type="submit">Search</button>

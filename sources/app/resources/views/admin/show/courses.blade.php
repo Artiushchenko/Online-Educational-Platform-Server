@@ -5,9 +5,21 @@
 @section('content')
 <div>
     <div class="search-part">
-        <button>Create new</button>
+        <button onclick="window.location.href='{{ route('admin.createCourse') }}'">Create new</button>
 
-        <input type="text" placeholder="Search...">
+        <form action="{{ route('admin.courses') }}" method="GET">
+            <input
+                type="text"
+                name="search"
+                placeholder="Course slug..."
+                value="{{ $search ?? '' }}"
+            >
+            <button type="submit">Search</button>
+
+            @if($search)
+                <a href="{{ route('admin.courses') }}">Clear</a>
+            @endif
+        </form>
     </div>
 
     <table>
@@ -28,8 +40,19 @@
                     <td>{{ $course->slug }}</td>
                     <td>{{ $course->creator->name }}</td>
                     <td>
-                        <button>Update</button>
-                        <button class="remove-button">Delete</button>
+                        <button
+                            onclick="window.location.href='{{ route('admin.editCourse', ['courseSlug' => $course->slug]) }}'"
+                        >
+                            Update
+                        </button>
+
+                        <form action="{{ route('admin.deleteCourse', ['id' => $course->id]) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="remove-button">
+                                Delete
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

@@ -5,7 +5,6 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    color: #FFFFFF;
 }
 
 html, body {
@@ -45,6 +44,7 @@ header > nav > ul > li > a {
     text-decoration: none;
     font-weight: 600;
     font-size: 16px;
+    color: #FFFFFF;
 }
 
 main {
@@ -66,6 +66,7 @@ table {
 td, th {
     border: 2px solid rgb(100, 100, 100);
     padding: 5px 0;
+    color: #FFFFFF;
 }
 
 .dashboard {
@@ -75,6 +76,7 @@ td, th {
     justify-content: center;
     align-items: center;
     gap: 50px;
+    color: #FFFFFF;
 }
 
 .dashboard > .stat-card {
@@ -85,19 +87,23 @@ td, th {
     align-items: center;
     justify-content: center;
     border: 2px solid rgb(100, 100, 100);
+    color: #FFFFFF;
 }
 
 .dashboard > .stat-card > p {
     font-size: 50px;
     font-weight: 600;
+    color: #FFFFFF;
 }
 
 .dashboard > .stat-card > h3 {
     font-size: 16px;
+    color: #FFFFFF;
 }
 
 h1 {
     font-size: 24px;
+    color: #FFFFFF;
 }
 
 button {
@@ -144,6 +150,7 @@ button:hover {
 
 .search-part > form > button {
     padding: 10px 20px;
+    color: #FFFFFF;
 }
 
 .search-part > form > a {
@@ -153,6 +160,7 @@ button:hover {
     padding: 10px 20px;
     transition: 0.3s ease-in-out;
     font-size: 14px;
+    color: #FFFFFF;
 }
 
 .search-part > form > a:hover {
@@ -177,6 +185,7 @@ button:hover {
 
 .form-group > label {
     font-size: 14px;
+    color: #FFFFFF;
 }
 
 .form-group > input {
@@ -185,6 +194,7 @@ button:hover {
     outline: none;
     border: 2px solid rgb(100, 100, 100);
     border-radius: 12px;
+    color: #FFFFFF;
 }
 
 .form-group > select {
@@ -203,6 +213,7 @@ button:hover {
     align-items: center;
     justify-content: center;
     gap: 20px;
+    color: #FFFFFF;
 }
 
 .welcome-page {
@@ -210,14 +221,20 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #FFFFFF;
 }
 
 .welcome-page > p {
     text-transform: uppercase;
     font-size: 50px;
+    color: #FFFFFF;
 }
 
 .welcome-page > p > span {
     color: #0000FF;
     font-weight: 900;
+}
+
+.note-editable {
+    color: #FFFFFF !important;
 }

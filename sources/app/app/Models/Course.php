@@ -14,14 +14,14 @@ class Course extends Model
 
     protected $fillable = ['title', 'slug', 'created_by'];
 
-    public function lectures(): HasMany
+    public function lectures(): BelongsToMany
     {
-        return $this->hasMany(Lecture::class);
+        return $this->belongsToMany(Lecture::class, 'course_lecture');
     }
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'category_course');
     }
 
     public function creator(): BelongsTo
