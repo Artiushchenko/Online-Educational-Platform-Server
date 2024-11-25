@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => false]);
 
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:Admin'])->group(function () {
     Route::get('/admin/statistics', [AdminController::class, 'getStatistics'])->name('admin.getStatistics');
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.getUsers');
     Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.createUser');
@@ -26,7 +26,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::delete('/admin/categories/{id}/delete', [CategoryController::class, 'deleteCategory'])->name('admin.deleteCategory');
 });
 
-Route::middleware(['auth:sanctum', 'role:admin,teacher'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:Admin,Teacher'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/courses', [CourseController::class, 'index'])->name('admin.courses');
     Route::get('/admin/courses/create', [CourseController::class, 'createCourse'])->name('admin.createCourse');

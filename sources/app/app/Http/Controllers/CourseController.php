@@ -19,7 +19,7 @@ class CourseController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where('slug', 'like', '%' . $search . '%');
             })
-            ->select('id', 'title', 'slug', 'created_by')->get();
+            ->select('id', 'title', 'slug', 'created_by')->simplePaginate(10);
 
         return view('admin.show.courses', [
             'courses' => $courses,
@@ -92,6 +92,8 @@ class CourseController extends Controller
     {
         $course = Course::where('slug', $courseSlug)->firstOrFail();
 
+        $this->authorize('update', $course);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|unique:courses,slug,' . $course->id,
@@ -115,6 +117,8 @@ class CourseController extends Controller
     public function deleteCourse($id)
     {
         $course = Course::find($id);
+
+        $this->authorize('delete', $course);
 
         $course->lectures()->detach();
         $course->categories()->detach();

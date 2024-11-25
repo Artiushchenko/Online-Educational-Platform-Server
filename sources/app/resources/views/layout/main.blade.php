@@ -23,7 +23,7 @@
     <header>
         <nav>
             <ul>
-                @if(Auth::user()->role->name === 'admin')
+                @if(Auth::user()->role->name === 'Admin')
                 <li><a href="/admin/statistics">Statistics</a></li>
                 <li><a href="/admin/users">Users</a></li>
                 <li><a href="/admin/courses">Courses</a></li>
@@ -31,7 +31,7 @@
                 <li><a href="/admin/categories">Categories</a></li>
                 @endif
 
-                @if(Auth::user()->role->name === 'teacher')
+                @if(Auth::user()->role->name === 'Teacher')
                 <li><a href="/admin/courses">Courses</a></li>
                 <li><a href="/admin/lectures">Lectures</a></li>
                 @endif

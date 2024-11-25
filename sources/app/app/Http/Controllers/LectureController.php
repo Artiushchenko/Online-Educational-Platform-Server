@@ -17,7 +17,7 @@ class LectureController extends Controller
 
         $lectures = Lecture::when($search, function ($query, $search) {
             $query->where('title', 'like', '%' . $search . '%');
-        })->select('id', 'title', 'video_id')->get();
+        })->select('id', 'title', 'video_id', 'created_by')->simplePaginate(10);
 
         return view('admin.show.lectures', [
             'lectures' => $lectures,
@@ -47,6 +47,8 @@ class LectureController extends Controller
             'files.*' => 'file|max:5120'
         ]);
 
+        $validated['created_by'] = auth()->id();
+
         $lecture = Lecture::create($validated);
 
         if($request->hasFile('files')) {
@@ -72,6 +74,8 @@ class LectureController extends Controller
     public function updateLecture(Request $request, $lectureId)
     {
         $lecture = Lecture::findOrFail($lectureId);
+
+        $this->authorize('update', $lecture);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -116,6 +120,8 @@ class LectureController extends Controller
     public function deleteLecture($lectureId)
     {
         $lecture = Lecture::findOrFail($lectureId);
+
+        $this->authorize('delete', $lecture);
 
         $lecture->delete();
 

@@ -28,6 +28,7 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>YouTube Video ID</th>
+                <th>Created By</th>
                 <th>Operations</th>
             </tr>
             </thead>
@@ -37,6 +38,7 @@
                     <td>{{ $lecture->id }}</td>
                     <td>{{ $lecture->title }}</td>
                     <td>{{ $lecture->video_id }}</td>
+                    <td>{{ $lecture->creator->name }}</td>
                     <td>
                         <button
                             onclick="window.location.href='{{ route('admin.editLecture', ['lectureId' => $lecture->id]) }}'"
@@ -56,5 +58,9 @@
             @endforeach
             </tbody>
         </table>
+
+        <div>
+            {{ $lectures->links() }}
+        </div>
     </div>
 @endsection

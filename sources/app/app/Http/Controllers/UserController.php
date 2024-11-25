@@ -18,7 +18,7 @@ class UserController extends Controller
             ->when($search, function ($query, $search) {
                 return $query->where('email', 'like', '%' . $search . '%');
             })
-            ->get();
+            ->simplePaginate(10);
 
         return view('admin.show.users', ['users' => $users, 'search' => $search]);
     }

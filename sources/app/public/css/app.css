@@ -173,7 +173,7 @@ button:hover {
     gap: 10px;
     padding: 20px;
     border: 2px solid rgb(100, 100, 100);
-    width: max-content;
+    max-width: 40%;
 }
 
 .edit > .form-group {
@@ -261,4 +261,9 @@ button:hover {
     font-size: 12px;
     color: #FFFFFF;
     font-style: italic;
+}
+
+.user_select,
+.user_select > option {
+    background-color: #FFFFFF !important;
 }

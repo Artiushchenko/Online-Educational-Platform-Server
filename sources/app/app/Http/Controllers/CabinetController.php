@@ -11,6 +11,9 @@ class CabinetController extends Controller
     {
         $user = $request->user();
 
-        return response()->json(['username' => $user->name]);
+        return response()->json([
+            'user_name' => $user->name,
+            'user_role' => $user->role->name
+        ]);
     }
 }

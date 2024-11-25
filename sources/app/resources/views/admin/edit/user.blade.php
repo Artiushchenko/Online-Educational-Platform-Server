@@ -35,7 +35,7 @@
 
             <div class="form-group">
                 <label for="role">Role</label>
-                <select name="role_id" id="role" required>
+                <select name="role_id" id="role" class="user_select" required>
                     @foreach($roles as $role)
                         <option value="{{ $role->id }}"
                                 @if($role->id == old('role_id', $user->role_id)) selected @endif>
