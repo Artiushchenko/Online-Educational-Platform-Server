@@ -24,6 +24,11 @@
                 <p>{{ $categoriesCount }}</p>
                 <h3>Categories</h3>
             </div>
+
+            <div class="stat-card">
+                <p>{{ $filesCount }}</p>
+                <h3>Files</h3>
+            </div>
         </div>
     </div>
 @endsection

@@ -29,7 +29,6 @@
                 <li><a href="/admin/courses">Courses</a></li>
                 <li><a href="/admin/lectures">Lectures</a></li>
                 <li><a href="/admin/categories">Categories</a></li>
-                <li><a href="/admin/materials">Materials</a></li>
                 @endif
 
                 @if(Auth::user()->role->name === 'teacher')

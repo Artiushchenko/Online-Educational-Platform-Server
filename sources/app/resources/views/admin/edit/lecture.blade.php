@@ -6,7 +6,12 @@
     <div>
         <h1>Edit Lecture</h1>
 
-        <form action="{{ route('admin.updateLecture', $lecture->id) }}" method="POST" class="edit">
+        <form
+            action="{{ route('admin.updateLecture', $lecture->id) }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="edit"
+        >
             @csrf
             <div class="form-group">
                 <label for="title">Title</label>
@@ -31,6 +36,34 @@
                     <div>{{ $message }}</div>
                 @enderror
             </div>
+
+            <div class="form-group">
+                <label for="files">Upload Files</label>
+                <input type="file" id="files" name="files[]" multiple>
+                @error('files.*')
+                    <div>{{ $message }}</div>
+                @enderror
+            </div>
+
+            @if($lecture->files->isNotEmpty())
+                <div class="form-group">
+                    <label>Attached files</label>
+                    <hr>
+                    <p class="alert-text">If you want to delete any old files, check the boxes next to them.</p>
+                    <hr>
+                    <ul class="lecture-files-list">
+                        @foreach ($lecture->files as $file)
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="delete_files[]" value="{{ $file->id }}">
+                                </label>
+
+                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank">{{ $file->file_name }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <button type="submit">Update Lecture</button>
         </form>

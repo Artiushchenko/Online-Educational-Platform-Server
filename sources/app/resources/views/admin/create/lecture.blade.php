@@ -6,7 +6,12 @@
     <div>
         <h1>Create New Lecture</h1>
 
-        <form action="{{ route('admin.storeLecture') }}" method="POST" class="edit">
+        <form
+            action="{{ route('admin.storeLecture') }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="edit"
+        >
             @csrf
             <div class="form-group">
                 <label for="title">Title</label>
@@ -28,6 +33,14 @@
                 <label for="video_id">YouTube Video ID</label>
                 <input type="text" id="video_id" name="video_id" required>
                 @error('video_id')
+                    <div>{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="files">Upload Files</label>
+                <input type="file" id="files" name="files[]" multiple>
+                @error('files.*')
                     <div>{{ $message }}</div>
                 @enderror
             </div>
