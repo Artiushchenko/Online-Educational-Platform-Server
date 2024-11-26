@@ -36,7 +36,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $role = Role::where('name', 'student')->first();
+        $role = Role::where('name', 'Student')->first();
 
         User::create([
             'name' => $validated['name'],
