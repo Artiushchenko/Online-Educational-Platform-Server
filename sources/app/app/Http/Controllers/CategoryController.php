@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index(): JsonResponse
     {
-        $categories = Category::with('courses')->get();
+        $categories = Category::all();
 
         return response()->json($categories, 200);
     }
@@ -18,14 +18,21 @@ class CategoryController extends Controller
     public function getCategories(Request $request)
     {
         $search = $request->input('search');
+        $sortBy = $request->input('sortBy', 'id');
+        $sortOrder = $request->input('sortOrder', 'asc');
 
         $categories = Category::when($search, function ($query, $search) {
             $query->where('name', 'LIKE', '%' . $search . '%');
-        })->select('id', 'name')->simplePaginate(10);
+        })
+            ->select('id', 'name')
+            ->orderBy($sortBy, $sortOrder)
+            ->simplePaginate(10);
 
         return view('admin.show.categories', [
             'categories' => $categories,
             'search' => $search,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder
         ]);
     }
 

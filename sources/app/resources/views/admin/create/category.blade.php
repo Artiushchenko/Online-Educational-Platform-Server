@@ -12,7 +12,7 @@
                 <label for="name">Category Name</label>
                 <input type="text" id="name" name="name" value="{{ old('name') }}">
                 @if ($errors->has('name'))
-                    <span class="error">{{ $errors->first('name') }}</span>
+                    <span class="color: #FF0000; font-size: 14px;">{{ $errors->first('name') }}</span>
                 @endif
             </div>
 

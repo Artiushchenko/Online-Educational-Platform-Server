@@ -15,25 +15,25 @@
             @csrf
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" id="title" name="title" required>
+                <input type="text" id="title" name="title">
                 @error('title')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="content">Content</label>
-                <textarea id="summernote" name="content" required></textarea>
+                <textarea id="summernote" name="content"></textarea>
                 @error('content')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="video_id">YouTube Video ID</label>
-                <input type="text" id="video_id" name="video_id" required>
+                <input type="text" id="video_id" name="video_id">
                 @error('video_id')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -41,7 +41,7 @@
                 <label for="files">Upload Files</label>
                 <input type="file" id="files" name="files[]" multiple>
                 @error('files.*')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 

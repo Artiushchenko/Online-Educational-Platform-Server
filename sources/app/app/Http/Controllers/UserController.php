@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lecture;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,15 +13,23 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $sortBy = $request->input('sortBy', 'id');
+        $sortOrder = $request->input('sortOrder', 'asc');
 
         $users = User::with('role')
             ->select('id', 'name', 'role_id', 'email')
             ->when($search, function ($query, $search) {
                 return $query->where('email', 'like', '%' . $search . '%');
             })
+            ->orderBy($sortBy, $sortOrder)
             ->simplePaginate(10);
 
-        return view('admin.show.users', ['users' => $users, 'search' => $search]);
+        return view('admin.show.users', [
+            'users' => $users,
+            'search' => $search,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder
+        ]);
     }
 
     public function create()
@@ -87,5 +96,17 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.getUsers');
+    }
+
+    public function getStatistics()
+    {
+        $user = auth()->user();
+
+        $totalLectures = Lecture::count();
+        $viewedLectures = $user->viewedLectures()->count();
+
+        return response()->json([
+            'progress' => $totalLectures > 0 ? ($viewedLectures / $totalLectures) * 100 : 0
+        ]);
     }
 }

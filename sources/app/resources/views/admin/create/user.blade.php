@@ -10,25 +10,25 @@
             @csrf
             <div class="form-group">
                 <label for="name">Username</label>
-                <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+                <input type="text" name="name" id="name" value="{{ old('name') }}">
                 @error('name')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required>
+                <input type="email" name="email" id="email" value="{{ old('email') }}">
                 @error('email')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" required>
+                <input type="password" name="password" id="password">
                 @error('password')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 

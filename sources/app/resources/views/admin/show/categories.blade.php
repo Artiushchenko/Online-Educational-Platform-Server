@@ -7,6 +7,15 @@
         <div class="search-part">
             <button onclick="window.location.href='{{ route('admin.createCategory') }}'">Create new</button>
 
+            @if(request()->has('sortBy') || request()->has('sortOrder'))
+                <button
+                    onclick="window.location.href='{{ route('admin.getCategories', ['search' => null]) }}'"
+                    class="remove-button"
+                >
+                    Reset Sort
+                </button>
+            @endif
+
             <form action="{{ route('admin.getCategories') }}" method="GET">
                 <input
                     type="text"
@@ -25,8 +34,28 @@
         <table>
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
+                <th>
+                    <a
+                        style="text-decoration: none; color: #FFFFFF;"
+                        href="{{ route('admin.getCategories', ['sortBy' => 'id', 'sortOrder' => $sortBy == 'id' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
+                    >
+                        ID
+                        @if($sortBy == 'id')
+                            @if($sortOrder == 'asc') ↑ @else ↓ @endif
+                        @endif
+                    </a>
+                </th>
+                <th>
+                    <a
+                        style="text-decoration: none; color: #FFFFFF;"
+                        href="{{ route('admin.getCategories', ['sortBy' => 'name', 'sortOrder' => $sortBy == 'name' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
+                    >
+                        Name
+                        @if($sortBy == 'name')
+                            @if($sortOrder == 'asc') ↑ @else ↓ @endif
+                        @endif
+                    </a>
+                </th>
                 <th>Operations</th>
             </tr>
             </thead>
@@ -42,13 +71,9 @@
                             Update
                         </button>
 
-                        <form action="{{ route('admin.deleteCategory', ['id' => $category->id]) }}" method="POST" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="remove-button">
-                                Delete
-                            </button>
-                        </form>
+                        <button type="button" class="remove-button" onclick="openModal({{ $category->id }}, '{{ route('admin.deleteCategory', ['id' => $category->id]) }}', 'category')">
+                            Delete
+                        </button>
                     </td>
                 </tr>
             @endforeach
@@ -58,5 +83,7 @@
         <div>
             {{ $categories->links() }}
         </div>
+
+        @include('components.modal')
     </div>
 @endsection

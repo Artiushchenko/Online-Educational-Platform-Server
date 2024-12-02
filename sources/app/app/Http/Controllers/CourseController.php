@@ -14,22 +14,45 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $sortBy = $request->input('sortBy', 'id');
+        $sortOrder = $request->input('sortOrder', 'asc');
 
         $courses = Course::with('creator:id,name')
             ->when($search, function ($query, $search) {
                 $query->where('slug', 'like', '%' . $search . '%');
             })
-            ->select('id', 'title', 'slug', 'created_by')->simplePaginate(10);
+            ->select('id', 'title', 'slug', 'created_by')
+            ->orderBy($sortBy, $sortOrder)
+            ->simplePaginate(10);
 
         return view('admin.show.courses', [
             'courses' => $courses,
             'search' => $search,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder
         ]);
     }
 
-    public function showCoursesList(): JsonResponse
+    public function showCoursesList(Request $request): JsonResponse
     {
-        $courses = Course::with('categories')->get();
+        $query = Course::with('categories');
+
+        if ($request->has('category_ids')) {
+            $categoryIds = $request->get('category_ids');
+
+            if (is_array($categoryIds)) {
+                $query->whereHas('categories', function ($q) use ($categoryIds) {
+                    $q->whereIn('id', $categoryIds);
+                });
+            } else {
+                $categoryIds = explode(',', $categoryIds);
+                $query->whereHas('categories', function ($q) use ($categoryIds) {
+                    $q->whereIn('id', $categoryIds);
+                });
+            }
+        }
+
+        $courses = $query->get();
 
         return response()->json($courses, 200);
     }

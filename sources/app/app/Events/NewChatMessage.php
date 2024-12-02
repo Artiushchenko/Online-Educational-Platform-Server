@@ -2,9 +2,7 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -26,6 +24,19 @@ class NewChatMessage implements ShouldBroadcast
     {
         return [
             new PrivateChannel('chat.'. $this->chatMessage->chat_room_id),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'message.new';
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'message' => $this->chatMessage,
+            'user' => $this->chatMessage->user->name,
         ];
     }
 }

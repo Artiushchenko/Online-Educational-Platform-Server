@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Chat\ChatMessage;
 use App\Models\Chat\ChatRoom;
 use App\Events\NewChatMessage;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {

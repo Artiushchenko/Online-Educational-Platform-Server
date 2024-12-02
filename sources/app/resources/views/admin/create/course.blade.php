@@ -10,17 +10,17 @@
             @csrf
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" name="title" id="title" required>
+                <input type="text" name="title" id="title">
                 @error('title')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="slug">Slug</label>
-                <input type="text" name="slug" id="slug" required>
+                <input type="text" name="slug" id="slug">
                 @error('slug')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -32,7 +32,7 @@
                     @endforeach
                 </select>
                 @error('lectures')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -44,7 +44,7 @@
                     @endforeach
                 </select>
                 @error('categories')
-                    <div>{{ $message }}</div>
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror
             </div>
 

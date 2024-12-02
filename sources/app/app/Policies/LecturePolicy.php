@@ -14,6 +14,6 @@ class LecturePolicy
 
     public function delete(User $user, Lecture $lecture): bool
     {
-        return $user->role->name === 'Admin' || $lecture->created_by === $user->id;
+        return $user->role->name === 'Admin';
     }
 }

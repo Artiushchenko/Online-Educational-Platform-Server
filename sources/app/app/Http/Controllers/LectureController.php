@@ -14,14 +14,21 @@ class LectureController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $sortBy = $request->input('sortBy', 'id');
+        $sortOrder = $request->input('sortOrder', 'asc');
 
         $lectures = Lecture::when($search, function ($query, $search) {
             $query->where('title', 'like', '%' . $search . '%');
-        })->select('id', 'title', 'video_id', 'created_by')->simplePaginate(10);
+        })
+            ->select('id', 'title', 'video_id', 'created_by')
+            ->orderBy($sortBy, $sortOrder)
+            ->simplePaginate(10);
 
         return view('admin.show.lectures', [
             'lectures' => $lectures,
-            'search' => $search
+            'search' => $search,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder
         ]);
     }
 
@@ -126,5 +133,18 @@ class LectureController extends Controller
         $lecture->delete();
 
         return redirect()->route('admin.lectures');
+    }
+
+    public function markLectureAsViewed($courseSlug, $lectureId)
+    {
+        $user = auth()->user();
+        $course = Course::where('slug', $courseSlug)->firstOrFail();
+        $lecture = Lecture::where('id', $lectureId)->firstOrFail();
+
+        if (!$user->viewedLectures()->where('lecture_id', $lecture->id)->exists()) {
+            $user->viewedLectures()->attach($lecture->id);
+        }
+
+        return response()->noContent();
     }
 }

@@ -12,8 +12,8 @@ class CoursePolicy
         return $user->role->name === 'Admin' || $user->id === $course->created_by;
     }
 
-    public function delete(User $user, Course $course): bool
+    public function delete(User $user): bool
     {
-        return $user->role->name === 'Admin' || $user->id === $course->created_by;
+        return $user->role->name === 'Admin';
     }
 }

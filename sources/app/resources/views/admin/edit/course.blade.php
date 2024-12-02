@@ -17,8 +17,10 @@
                     name="title"
                     id="title"
                     value="{{ old('title', $course->title) }}"
-                    required
                 >
+                @error('title')
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -28,13 +30,15 @@
                     name="slug"
                     id="slug"
                     value="{{ old('slug', $course->slug) }}"
-                    required
                 >
+                @error('slug')
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="lectures">Lectures</label>
-                <select name="lectures[]" id="lectures" class="form-control" multiple required>
+                <select name="lectures[]" id="lectures" class="form-control" multiple>
                     @foreach($lectures as $lecture)
                         <option value="{{ $lecture->id }}"
                                 @if(in_array($lecture->id, $course->lectures->pluck('id')->toArray())) selected @endif>
@@ -42,11 +46,14 @@
                         </option>
                     @endforeach
                 </select>
+                @error('lectures')
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="categories">Categories</label>
-                <select name="categories[]" id="categories" class="form-control" multiple required>
+                <select name="categories[]" id="categories" class="form-control" multiple>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}"
                                 @if(in_array($category->id, $course->categories->pluck('id')->toArray())) selected @endif>
@@ -54,6 +61,9 @@
                         </option>
                     @endforeach
                 </select>
+                @error('categories')
+                    <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
+                @enderror
             </div>
 
             <button type="submit">Update Course</button>
