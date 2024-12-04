@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\StoreCourseRequest;
+use App\Http\Requests\Course\UpdateCourseRequest;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Lecture;
@@ -75,16 +77,9 @@ class CourseController extends Controller
         ]);
     }
 
-    public function storeCourse(Request $request)
+    public function storeCourse(StoreCourseRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:courses,slug',
-            'lectures' => 'required|array',
-            'categories' => 'required|array',
-            'lectures.*' => 'exists:lectures,id',
-            'categories.*' => 'exists:categories,id',
-        ]);
+        $validated = $request->validated();
 
         $course = Course::create([
             'title' => $validated['title'],
@@ -111,20 +106,13 @@ class CourseController extends Controller
         ]);
     }
 
-    public function updateCourse(Request $request, $courseSlug)
+    public function updateCourse(UpdateCourseRequest $request, $courseSlug)
     {
         $course = Course::where('slug', $courseSlug)->firstOrFail();
 
         $this->authorize('update', $course);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:courses,slug,' . $course->id,
-            'lectures' => 'required|array',
-            'categories' => 'required|array',
-            'lectures.*' => 'exists:lectures,id',
-            'categories.*' => 'exists:categories,id',
-        ]);
+        $validated = $request->validated();
 
         $course->update([
             'title' => $validated['title'],

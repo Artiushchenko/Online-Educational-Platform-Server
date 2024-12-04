@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\NewChatMessage;
+use App\Events\ReportGenerated;
 use App\Listeners\SendChatMessageNotification;
+use App\Listeners\SendReportGeneratedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -16,6 +18,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewChatMessage::class => [
             SendChatMessageNotification::class
+        ],
+        ReportGenerated::class => [
+            SendReportGeneratedNotification::class
         ]
     ];
 

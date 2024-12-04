@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LectureController;
+use App\Http\Controllers\LectureFileController;
+use App\Http\Controllers\PDFReportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
-use App\Http\Controllers\CabinetController;
 use App\Http\Controllers\Chat\ChatController;
 
 Auth::routes();
@@ -19,10 +20,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/courses/{courseSlug}', [CourseController::class, 'showCourse'])->name('courses.showCourse');
     Route::get('/courses/{courseSlug}/lectures/{lectureId}', [LectureController::class, 'showLecture'])->name('lectures.showLecture');
     Route::post('/courses/{courseSlug}/lectures/{lectureId}/complete', [LectureController::class, 'markLectureAsViewed'])->name('lectures.markLectureAsViewed');
-
-    Route::get('/cabinet', [CabinetController::class, 'showCabinet'])->name('cabinet.showCabinet');
+    Route::get('/courses/{courseSlug}/lectures/{lectureId}/files/{fileId}/download', [LectureFileController::class, 'downloadFile'])->name('lectures.downloadFile');
 
     Route::get('/statistics', [UserController::class, 'getStatistics'])->name('user.getStatistics');
+
+    Route::get('/home', [UserController::class, 'getUser'])->name('user.home');
+
+    Route::post('/report/generate', [PDFReportController::class, 'generateReport'])->name('report.generate');
+    Route::get('/report/download/{fileName}', [PDFReportController::class, 'downloadReport'])->name('report.download');
 });
 
 Route::middleware('auth:sanctum')->get('/chat/rooms', [ChatController::class, 'rooms']);

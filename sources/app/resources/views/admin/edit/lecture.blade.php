@@ -74,7 +74,7 @@
             $('#summernote').summernote({
                 tabsize: 2,
                 height: 200,
-                width: 600,
+                width: 530,
                 toolbar: [
                     ['style', ['style']],
                     ['font', ['bold', 'underline', 'clear']],

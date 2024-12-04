@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\Lecture;
 use App\Models\Role;
 use App\Models\User;
@@ -37,13 +39,9 @@ class UserController extends Controller
         return view('admin.create.user');
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-        ]);
+        $validated = $request->validated();
 
         $role = Role::where('name', 'Student')->first();
 
@@ -66,14 +64,9 @@ class UserController extends Controller
         return view('admin.edit.user', ['user' => $user, 'roles' => $roles]);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8',
-            'role_id' => 'required|exists:roles,id',
-        ]);
+        $validated = $request->validated();
 
         $user = User::findOrFail($id);
 
@@ -108,5 +101,16 @@ class UserController extends Controller
         return response()->json([
             'progress' => $totalLectures > 0 ? ($viewedLectures / $totalLectures) * 100 : 0
         ]);
+    }
+
+    public function getUser()
+    {
+        $user = auth()->user()->name;
+        $role = auth()->user()->role->name;
+
+        return response()->json([
+            'user_name' => $user,
+            'user_role' => $role
+        ], 200);
     }
 }

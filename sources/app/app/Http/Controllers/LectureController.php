@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Lecture\StoreLectureRequest;
+use App\Http\Requests\Lecture\UpdateLectureRequest;
 use App\Models\Course;
 use App\Models\Lecture;
 use App\Models\LectureFile;
@@ -34,8 +36,8 @@ class LectureController extends Controller
 
     public function showLecture($courseSlug, $lectureId): JsonResponse
     {
-        $course = Course::where('slug', $courseSlug)->first();
-        $lecture = Lecture::where('id', $lectureId)->first();
+        Course::where('slug', $courseSlug)->firstOrFail();
+        $lecture = Lecture::with('files')->where('id', $lectureId)->firstOrFail();
 
         return response()->json($lecture, 200);
     }
@@ -45,14 +47,9 @@ class LectureController extends Controller
         return view('admin.create.lecture');
     }
 
-    public function storeLecture(Request $request)
+    public function storeLecture(StoreLectureRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'video_id' => 'required|string|max:255',
-            'files.*' => 'file|max:5120'
-        ]);
+        $validated = $request->validated();
 
         $validated['created_by'] = auth()->id();
 
@@ -78,20 +75,13 @@ class LectureController extends Controller
         return view('admin.edit.lecture', ['lecture' => $lecture]);
     }
 
-    public function updateLecture(Request $request, $lectureId)
+    public function updateLecture(UpdateLectureRequest $request, $lectureId)
     {
         $lecture = Lecture::findOrFail($lectureId);
 
         $this->authorize('update', $lecture);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'video_id' => 'required|string|max:255',
-            'files.*' => 'file|max:5120',
-            'delete_files' => 'array',
-            'delete_files.*' => 'exists:lecture_files,id'
-        ]);
+        $validated = $request->validated();
 
         $lecture->update([
             'title' => $validated['title'],

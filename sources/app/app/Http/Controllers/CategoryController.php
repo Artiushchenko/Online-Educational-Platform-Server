@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,13 +43,9 @@ class CategoryController extends Controller
         return view('admin.create.category');
     }
 
-    public function storeCategory(Request $request)
+    public function storeCategory(StoreCategoryRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-        ]);
-
-        Category::create(['name' => $validated['name']]);
+        Category::create(['name' => $request->validated()['name']]);
 
         return redirect()->route('admin.getCategories');
     }
@@ -59,15 +57,11 @@ class CategoryController extends Controller
         return view('admin.edit.category', ['category' => $category]);
     }
 
-    public function updateCategory(Request $request, $id)
+    public function updateCategory(UpdateCategoryRequest $request, $id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $id,
-        ]);
-
         $category = Category::findOrFail($id);
 
-        $category->update(['name' => $validated['name']]);
+        $category->update(['name' => $request->validated()['name']]);
 
         return redirect()->route('admin.getCategories');
     }
