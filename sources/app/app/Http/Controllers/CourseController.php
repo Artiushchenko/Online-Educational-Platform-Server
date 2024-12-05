@@ -138,4 +138,17 @@ class CourseController extends Controller
 
         return redirect()->route('admin.courses');
     }
+
+    public function search(Request $request): JsonResponse
+    {
+        $search = $request->input('search', '');
+
+        $courses = Course::query()
+            ->where('title', 'like', '%' . $search . '%')
+            ->select('id', 'title', 'slug')
+            ->limit(5)
+            ->get();
+
+        return response()->json($courses, 200);
+    }
 }

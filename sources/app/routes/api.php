@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('/report/generate', [PDFReportController::class, 'generateReport'])->name('report.generate');
     Route::get('/report/download/{fileName}', [PDFReportController::class, 'downloadReport'])->name('report.download');
+
+    Route::get('/search', [CourseController::class, 'search'])->name('course.search');
 });
 
 Route::middleware('auth:sanctum')->get('/chat/rooms', [ChatController::class, 'rooms']);
