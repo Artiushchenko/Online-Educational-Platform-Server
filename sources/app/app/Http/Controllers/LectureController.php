@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Lecture\StoreLectureRequest;
 use App\Http\Requests\Lecture\UpdateLectureRequest;
-use App\Models\Course;
 use App\Models\Lecture;
 use App\Services\LectureService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -29,21 +27,12 @@ class LectureController extends Controller
         return view('admin.show.lectures', compact('lectures', 'search', 'sortBy', 'sortOrder'));
     }
 
-    public function showLecture(string $courseSlug, int $lectureId): JsonResponse
-    {
-        Course::where('slug', $courseSlug)->firstOrFail();
-
-        $lecture = Lecture::with('files')->where('id', $lectureId)->firstOrFail();
-
-        return response()->json($lecture);
-    }
-
-    public function createLecture(): View
+    public function create(): View
     {
         return view('admin.create.lecture');
     }
 
-    public function storeLecture(StoreLectureRequest $request): RedirectResponse
+    public function store(StoreLectureRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -53,17 +42,17 @@ class LectureController extends Controller
 
         $this->lectureService->storeLecture($validated, $files);
 
-        return redirect()->route('admin.lectures');
+        return redirect()->route('admin.lectures.index');
     }
 
-    public function editLecture($lectureId): View
+    public function edit($lectureId): View
     {
         $lecture = Lecture::with('files')->findOrFail($lectureId);
 
         return view('admin.edit.lecture', ['lecture' => $lecture]);
     }
 
-    public function updateLecture(UpdateLectureRequest $request, int $lectureId): RedirectResponse
+    public function update(UpdateLectureRequest $request, int $lectureId): RedirectResponse
     {
         $lecture = Lecture::findOrFail($lectureId);
 
@@ -78,10 +67,10 @@ class LectureController extends Controller
 
         $this->lectureService->updateLecture($lecture, $validated, $files, $deleteFiles);
 
-        return redirect()->route('admin.lectures');
+        return redirect()->route('admin.lectures.index');
     }
 
-    public function deleteLecture(int $lectureId): RedirectResponse
+    public function destroy(int $lectureId): RedirectResponse
     {
         $lecture = Lecture::findOrFail($lectureId);
 
@@ -89,19 +78,6 @@ class LectureController extends Controller
 
         $this->lectureService->deleteLecture($lecture);
 
-        return redirect()->route('admin.lectures');
-    }
-
-    public function markLectureAsViewed($courseSlug, $lectureId): JsonResponse
-    {
-        $user = auth()->user();
-        $course = Course::where('slug', $courseSlug)->firstOrFail();
-        $lecture = Lecture::where('id', $lectureId)->firstOrFail();
-
-        if (!$user->viewedLectures()->where('lecture_id', $lecture->id)->exists()) {
-            $user->viewedLectures()->attach($lecture->id);
-        }
-
-        return response()->json(null, 204);
+        return redirect()->route('admin.lectures.index');
     }
 }

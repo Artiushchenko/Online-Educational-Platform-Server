@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Models\Lecture;
 use App\Services\CourseService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -30,27 +29,7 @@ class CourseController extends Controller
         return view('admin.show.courses', compact('courses', 'search', 'sortBy', 'sortOrder'));
     }
 
-    public function showCoursesList(Request $request): JsonResponse
-    {
-        $categoryIds = $request->get('category_ids');
-
-        if (is_string($categoryIds)) {
-            $categoryIds = explode(',', $categoryIds);
-        }
-
-        $courses = $this->courseService->getCoursesByCategories($categoryIds);
-
-        return response()->json($courses);
-    }
-
-    public function showCourse($courseSlug): JsonResponse
-    {
-        $course = $this->courseService->getCourseBySlug($courseSlug);
-
-        return response()->json($course);
-    }
-
-    public function createCourse(): View
+    public function create(): View
     {
         $lectures = Lecture::all();
         $categories = Category::all();
@@ -58,16 +37,16 @@ class CourseController extends Controller
         return view('admin.create.course', compact('lectures', 'categories'));
     }
 
-    public function storeCourse(StoreCourseRequest $request): RedirectResponse
+    public function store(StoreCourseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         $this->courseService->storeCourse($validated);
 
-        return redirect()->route('admin.courses');
+        return redirect()->route('admin.courses.index');
     }
 
-    public function editCourse(string $courseSlug): View
+    public function edit(string $courseSlug): View
     {
         $course = $this->courseService->getCourseBySlug($courseSlug);
 
@@ -78,7 +57,7 @@ class CourseController extends Controller
         return view('admin.edit.course', compact('course', 'lectures', 'categories'));
     }
 
-    public function updateCourse(UpdateCourseRequest $request, string $courseSlug): RedirectResponse
+    public function update(UpdateCourseRequest $request, string $courseSlug): RedirectResponse
     {
         $course = $this->courseService->getCourseBySlug($courseSlug);
 
@@ -88,10 +67,10 @@ class CourseController extends Controller
 
         $this->courseService->updateCourse($course, $validated);
 
-        return redirect()->route('admin.courses');
+        return redirect()->route('admin.courses.index');
     }
 
-    public function deleteCourse(int $id): RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
         $course = Course::findOrFail($id);
 
@@ -99,15 +78,6 @@ class CourseController extends Controller
 
         $this->courseService->deleteCourse($course);
 
-        return redirect()->route('admin.courses');
-    }
-
-    public function search(Request $request): JsonResponse
-    {
-        $search = $request->input('search', '');
-
-        $courses = $this->courseService->searchCourses($search);
-
-        return response()->json($courses);
+        return redirect()->route('admin.courses.index');
     }
 }

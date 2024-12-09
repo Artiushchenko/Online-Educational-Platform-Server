@@ -6,7 +6,7 @@
     <div>
         <h1>Create New Category</h1>
 
-        <form action="{{ route('admin.storeCategory') }}" method="POST" class="edit">
+        <form action="{{ route('admin.categories.store') }}" method="POST" class="edit">
             @csrf
             <div class="form-group">
                 <label for="name">Category Name</label>

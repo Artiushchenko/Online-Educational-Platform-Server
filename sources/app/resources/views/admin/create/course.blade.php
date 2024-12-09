@@ -6,7 +6,7 @@
     <div>
         <h1>Create New Course</h1>
 
-        <form action="{{ route('admin.storeCourse') }}" method="POST" class="edit">
+        <form action="{{ route('admin.courses.store') }}" method="POST" class="edit">
             @csrf
             <div class="form-group">
                 <label for="title">Title</label>

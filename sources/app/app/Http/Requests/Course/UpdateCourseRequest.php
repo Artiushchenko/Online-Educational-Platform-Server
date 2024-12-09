@@ -14,7 +14,7 @@ class UpdateCourseRequest extends FormRequest
 
     public function rules(): array
     {
-        $course = Course::where('slug', $this->route('courseSlug'))->first();
+        $course = Course::where('slug', $this->route('course'))->first();
 
         return [
             'title' => 'required|string|max:255',

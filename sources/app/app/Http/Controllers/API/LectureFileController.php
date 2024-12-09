@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace app\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Services\LectureFileService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -12,7 +13,7 @@ class LectureFileController extends Controller
         protected LectureFileService $lectureFileService
     ) {}
 
-    public function downloadFile(string $courseSlug, int $lectureId, int $fileId): JsonResponse|BinaryFileResponse
+    public function downloadLectureFile(string $courseSlug, int $lectureId, int $fileId): JsonResponse|BinaryFileResponse
     {
         return $this->lectureFileService->downloadFile($courseSlug, $lectureId, $fileId);
     }

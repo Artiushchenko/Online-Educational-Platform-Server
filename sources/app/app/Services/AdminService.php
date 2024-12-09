@@ -12,7 +12,7 @@ use App\Models\User;
 
 class AdminService
 {
-    public function getStatistics(): array
+    public function showStatistics(): array
     {
         return [
             'usersCount' => User::count(),

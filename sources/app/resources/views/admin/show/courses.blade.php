@@ -5,18 +5,18 @@
 @section('content')
 <div>
     <div class="search-part">
-        <button onclick="window.location.href='{{ route('admin.createCourse') }}'">Create new</button>
+        <button onclick="window.location.href='{{ route('admin.courses.create') }}'">Create new</button>
 
         @if(request()->has('sortBy') || request()->has('sortOrder'))
             <button
-                onclick="window.location.href='{{ route('admin.courses', ['search' => null]) }}'"
+                onclick="window.location.href='{{ route('admin.courses.index', ['search' => null]) }}'"
                 class="remove-button"
             >
                 Reset Sort
             </button>
         @endif
 
-        <form action="{{ route('admin.courses') }}" method="GET">
+        <form action="{{ route('admin.courses.index') }}" method="GET">
             <input
                 type="text"
                 name="search"
@@ -26,7 +26,7 @@
             <button type="submit">Search</button>
 
             @if($search)
-                <a href="{{ route('admin.courses') }}">Clear</a>
+                <a href="{{ route('admin.courses.index') }}">Clear</a>
             @endif
         </form>
     </div>
@@ -37,7 +37,7 @@
                 <th>
                     <a
                         style="text-decoration: none; color: #FFFFFF;"
-                        href="{{ route('admin.courses', ['sortBy' => 'id', 'sortOrder' => $sortBy == 'id' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
+                        href="{{ route('admin.courses.index', ['sortBy' => 'id', 'sortOrder' => $sortBy == 'id' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
                     >
                         ID
                         @if($sortBy == 'id')
@@ -48,7 +48,7 @@
                 <th>
                     <a
                         style="text-decoration: none; color: #FFFFFF;"
-                        href="{{ route('admin.courses', ['sortBy' => 'title', 'sortOrder' => $sortBy == 'title' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
+                        href="{{ route('admin.courses.index', ['sortBy' => 'title', 'sortOrder' => $sortBy == 'title' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
                     >
                         Title
                         @if($sortBy == 'title')
@@ -59,7 +59,7 @@
                 <th>
                     <a
                         style="text-decoration: none; color: #FFFFFF;"
-                        href="{{ route('admin.courses', ['sortBy' => 'slug', 'sortOrder' => $sortBy == 'slug' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
+                        href="{{ route('admin.courses.index', ['sortBy' => 'slug', 'sortOrder' => $sortBy == 'slug' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
                     >
                         Slug
                         @if($sortBy == 'slug')
@@ -70,7 +70,7 @@
                 <th>
                     <a
                         style="text-decoration: none; color: #FFFFFF;"
-                        href="{{ route('admin.courses', ['sortBy' => 'created_by', 'sortOrder' => $sortBy == 'created_by' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
+                        href="{{ route('admin.courses.index', ['sortBy' => 'created_by', 'sortOrder' => $sortBy == 'created_by' && $sortOrder == 'asc' ? 'desc' : 'asc']) }}"
                     >
                         Created By
                         @if($sortBy == 'created_by')
@@ -90,12 +90,12 @@
                     <td>{{ $course->creator->name }}</td>
                     <td>
                         <button
-                            onclick="window.location.href='{{ route('admin.editCourse', ['courseSlug' => $course->slug]) }}'"
+                            onclick="window.location.href='{{ route('admin.courses.edit', ['course' => $course->slug]) }}'"
                         >
                             Update
                         </button>
 
-                        <button type="button" class="remove-button" onclick="openModal({{ $course->id }}, '{{ route('admin.deleteCourse', ['id' => $course->id]) }}', 'course')">
+                        <button type="button" class="remove-button" onclick="openModal({{ $course->id }}, '{{ route('admin.courses.destroy', ['course' => $course->id]) }}', 'course')">
                             Delete
                         </button>
                     </td>

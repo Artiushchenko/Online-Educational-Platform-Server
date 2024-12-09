@@ -7,12 +7,13 @@
         <h1>Edit Lecture</h1>
 
         <form
-            action="{{ route('admin.updateLecture', $lecture->id) }}"
+            action="{{ route('admin.lectures.update', $lecture->id) }}"
             method="POST"
             enctype="multipart/form-data"
             class="edit"
         >
             @csrf
+            @method('PUT')
             <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" id="title" name="title" value="{{ old('title', $lecture->title) }}">

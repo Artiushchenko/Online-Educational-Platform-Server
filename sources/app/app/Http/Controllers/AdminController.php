@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace app\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Services\AdminService;
 use Illuminate\View\View;
 
@@ -12,14 +11,14 @@ class AdminController extends Controller
         protected AdminService $adminService
     ) {}
 
-    public function index(): View
+    public function welcome(): View
     {
         return view('admin.show.welcome');
     }
 
-    public function getStatistics(): View
+    public function showStatistics(): View
     {
-        $statistics = $this->adminService->getStatistics();
+        $statistics = $this->adminService->showStatistics();
 
         return view('admin.show.statistics', $statistics);
     }

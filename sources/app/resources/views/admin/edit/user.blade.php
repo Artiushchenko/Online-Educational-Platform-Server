@@ -6,7 +6,7 @@
     <div>
         <h1>Edit User</h1>
 
-        <form action="{{ route('admin.updateUser', $user->id) }}" method="POST" class="edit">
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="edit">
             @csrf
             @method('PUT')
             <div class="form-group">

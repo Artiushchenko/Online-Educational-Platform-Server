@@ -6,7 +6,7 @@
     <div>
         <h1>Edit Course</h1>
 
-        <form action="{{ route('admin.updateCourse', $course->slug) }}" method="POST" class="edit">
+        <form action="{{ route('admin.courses.update', $course->slug) }}" method="POST" class="edit">
             @csrf
             @method('PUT')
 

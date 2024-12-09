@@ -7,7 +7,7 @@
         <h1>Create New Lecture</h1>
 
         <form
-            action="{{ route('admin.storeLecture') }}"
+            action="{{ route('admin.lectures.store') }}"
             method="POST"
             enctype="multipart/form-data"
             class="edit"

@@ -6,7 +6,7 @@
     <div>
         <h1>Create New User</h1>
 
-        <form action="{{ route('admin.storeUser') }}" method="POST" class="edit">
+        <form action="{{ route('admin.users.store') }}" method="POST" class="edit">
             @csrf
             <div class="form-group">
                 <label for="name">Username</label>
@@ -26,7 +26,7 @@
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password">
+                <input type="password" name="password" id="password" value="{{ old('password') }}">
                 @error('password')
                     <div class="color: #FF0000; font-size: 14px;">{{ $message }}</div>
                 @enderror

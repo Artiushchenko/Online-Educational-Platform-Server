@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace app\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Services\PDFReportService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
-use App\Models\Lecture;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\UserService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -41,7 +39,7 @@ class UserController extends Controller
 
         $this->userService->createUser($validated);
 
-        return redirect()->route('admin.getUsers');
+        return redirect()->route('admin.users.index');
     }
 
     public function edit(int $id): View
@@ -61,37 +59,15 @@ class UserController extends Controller
 
         $this->userService->updateUser($user, $validated);
 
-        return redirect()->route('admin.getUsers');
+        return redirect()->route('admin.users.index');
     }
 
-    public function delete(int $id): RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
 
         $this->userService->deleteUser($user);
 
-        return redirect()->route('admin.getUsers');
-    }
-
-    public function getStatistics(): JsonResponse
-    {
-        $user = auth()->user();
-
-        $totalLectures = Lecture::count();
-        $viewedLectures = $user->viewedLectures()->count();
-
-        return response()->json([
-            'progress' => $totalLectures > 0 ? ($viewedLectures / $totalLectures) * 100 : 0
-        ]);
-    }
-
-    public function getUser(): JsonResponse
-    {
-        $user = auth()->user();
-
-        return response()->json([
-            'user_name' => $user->name,
-            'user_role' => $user->role->name
-        ]);
+        return redirect()->route('admin.users.index');
     }
 }
