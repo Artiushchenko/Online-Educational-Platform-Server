@@ -17,7 +17,7 @@ class GenerateUserReportJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public $userId
+        public int $userId
     ) {}
 
     public function handle(): void

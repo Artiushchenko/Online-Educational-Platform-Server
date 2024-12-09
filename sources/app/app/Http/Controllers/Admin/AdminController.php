@@ -3,33 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Course;
-use App\Models\Lecture;
-use App\Models\LectureFile;
-use App\Models\User;
+use App\Services\AdminService;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function __construct(
+        protected AdminService $adminService
+    ) {}
+
+    public function index(): View
     {
         return view('admin.show.welcome');
     }
 
-    public function getStatistics()
+    public function getStatistics(): View
     {
-        $usersCount = User::count();
-        $coursesCount = Course::count();
-        $lecturesCount = Lecture::count();
-        $categoriesCount = Category::count();
-        $filesCount = LectureFile::count();
+        $statistics = $this->adminService->getStatistics();
 
-        return view('admin.show.statistics', [
-            'usersCount' => $usersCount,
-            'coursesCount' => $coursesCount,
-            'lecturesCount' => $lecturesCount,
-            'categoriesCount' => $categoriesCount,
-            'filesCount' => $filesCount
-        ]);
+        return view('admin.show.statistics', $statistics);
     }
 }

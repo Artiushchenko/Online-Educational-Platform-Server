@@ -2,27 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
-use App\Models\Lecture;
+use App\Services\LectureFileService;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LectureFileController extends Controller
 {
-    public function downloadFile($courseSlug, $lectureId, $fileId)
+    public function __construct(
+        protected LectureFileService $lectureFileService
+    ) {}
+
+    public function downloadFile(string $courseSlug, int $lectureId, int $fileId): JsonResponse|BinaryFileResponse
     {
-        Course::where('slug', $courseSlug)->firstOrFail();
-        $lecture = Lecture::with('files')->where('id', $lectureId)->firstOrFail();
-        $file = $lecture->files()->findOrFail($fileId);
-
-        if (!$file) {
-            return response()->json(['file_error' => 'File not found'], 404);
-        }
-
-        $filePath = storage_path('app/public/' . $file->file_path);
-
-        if (file_exists($filePath)) {
-            return response()->download($filePath, $file->file_name);
-        }
-
-        return response()->json(['error' => 'File not found'], 404);
+        return $this->lectureFileService->downloadFile($courseSlug, $lectureId, $fileId);
     }
 }

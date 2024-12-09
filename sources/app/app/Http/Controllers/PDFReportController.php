@@ -2,27 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\GenerateUserReportJob;
+use App\Services\PDFReportService;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PDFReportController extends Controller
 {
-    public function generateReport()
+    public function __construct(
+        protected PDFReportService $pdfReportService
+    ) {}
+
+    public function generateReport(): JsonResponse
     {
         $userId = auth()->id();
 
-        dispatch(new GenerateUserReportJob($userId));
-
-        return response()->json(['message' => 'Report generation started'], 202);
+        return $this->pdfReportService->generateReport((int) $userId);
     }
 
-    public function downloadReport($fileName)
+    public function downloadReport(string $fileName): JsonResponse|BinaryFileResponse
     {
-        $filePath = storage_path("app/public/reports/${fileName}");
-
-        if(file_exists($filePath)) {
-            return response()->download($filePath);
-        }
-
-        return response()->json(['message' => 'File not found'], 404);
+        return $this->pdfReportService->downloadReport($fileName);
     }
 }

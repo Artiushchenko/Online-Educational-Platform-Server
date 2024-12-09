@@ -7,91 +7,73 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\Lecture;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected UserService $userService
+    ) {}
+
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
-        $sortBy = $request->input('sortBy', 'id');
-        $sortOrder = $request->input('sortOrder', 'asc');
+        $search = (string) $request->input('search');
+        $sortBy = (string) $request->input('sortBy', 'id');
+        $sortOrder = (string) $request->input('sortOrder', 'asc');
 
-        $users = User::with('role')
-            ->select('id', 'name', 'role_id', 'email')
-            ->when($search, function ($query, $search) {
-                return $query->where('email', 'like', '%' . $search . '%');
-            })
-            ->orderBy($sortBy, $sortOrder)
-            ->simplePaginate(10);
+        $users = $this->userService->getUsers($search, $sortBy, $sortOrder);
 
-        return view('admin.show.users', [
-            'users' => $users,
-            'search' => $search,
-            'sortBy' => $sortBy,
-            'sortOrder' => $sortOrder
-        ]);
+        return view('admin.show.users', compact('users', 'search', 'sortBy', 'sortOrder'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('admin.create.user');
     }
 
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
-        $role = Role::where('name', 'Student')->first();
-
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role_id' => $role->id,
-        ]);
+        $this->userService->createUser($validated);
 
         return redirect()->route('admin.getUsers');
     }
 
-    public function edit($id)
+    public function edit(int $id): View
     {
         $user = User::findOrFail($id);
 
         $roles = Role::all();
 
-        return view('admin.edit.user', ['user' => $user, 'roles' => $roles]);
+        return view('admin.edit.user', compact('user', 'roles'));
     }
 
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateUserRequest $request, int $id): RedirectResponse
     {
         $validated = $request->validated();
 
         $user = User::findOrFail($id);
 
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        if ($validated['password']) {
-            $user->password = Hash::make($validated['password']);
-        }
-        $user->role_id = $validated['role_id'];
-
-        $user->save();
+        $this->userService->updateUser($user, $validated);
 
         return redirect()->route('admin.getUsers');
     }
 
-    public function delete($id)
+    public function delete(int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
 
-        $user->delete();
+        $this->userService->deleteUser($user);
 
         return redirect()->route('admin.getUsers');
     }
 
-    public function getStatistics()
+    public function getStatistics(): JsonResponse
     {
         $user = auth()->user();
 
@@ -103,14 +85,13 @@ class UserController extends Controller
         ]);
     }
 
-    public function getUser()
+    public function getUser(): JsonResponse
     {
-        $user = auth()->user()->name;
-        $role = auth()->user()->role->name;
+        $user = auth()->user();
 
         return response()->json([
-            'user_name' => $user,
-            'user_role' => $role
-        ], 200);
+            'user_name' => $user->name,
+            'user_role' => $user->role->name
+        ]);
     }
 }

@@ -2,42 +2,38 @@
 
 namespace App\Http\Controllers\Chat;
 
-use Illuminate\Support\Facades\Auth;
-
+use App\Services\ChatService;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Chat\ChatMessage;
-use App\Models\Chat\ChatRoom;
-use App\Events\NewChatMessage;
-use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
-    public function rooms(Request $request)
+    public function __construct(
+        protected ChatService $chatService
+    ) {}
+
+    public function rooms(): JsonResponse
     {
-        return ChatRoom::all();
+        $rooms = $this->chatService->getAllRooms();
+
+        return response()->json($rooms);
     }
 
-    public function messages(Request $request, $roomId)
+    public function messages(int $roomId): JsonResponse
     {
-        return ChatMessage::where('chat_room_id', $roomId)
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $messages = $this->chatService->getMessagesByRoomId($roomId);
+
+        return response()->json($messages);
     }
 
-    public function newMessage(Request $request, $roomId)
+    public function newMessage(Request $request, int $roomId): JsonResponse
     {
-        $newMessage = new ChatMessage();
+        $newMessage = $this->chatService->createNewMessage(
+            $roomId,
+            $request->input('message')
+        );
 
-        $newMessage->user_id = Auth::id();
-        $newMessage->chat_room_id = $roomId;
-        $newMessage->message = $request->message;
-
-        $newMessage->save();
-
-        broadcast(new NewChatMessage($newMessage))->toOthers();
-
-        return $newMessage;
+        return response()->json($newMessage);
     }
 }

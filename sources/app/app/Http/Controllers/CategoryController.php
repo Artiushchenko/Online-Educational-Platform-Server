@@ -4,73 +4,69 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
+    public function __construct(
+        protected CategoryService $categoryService
+    ) {}
+
     public function index(): JsonResponse
     {
-        $categories = Category::all();
+        $categories = $this->categoryService->getAllCategories();
 
-        return response()->json($categories, 200);
+        return response()->json($categories);
     }
 
-    public function getCategories(Request $request)
+    public function getCategories(Request $request): View
     {
         $search = $request->input('search');
         $sortBy = $request->input('sortBy', 'id');
         $sortOrder = $request->input('sortOrder', 'asc');
 
-        $categories = Category::when($search, function ($query, $search) {
-            $query->where('name', 'LIKE', '%' . $search . '%');
-        })
-            ->select('id', 'name')
-            ->orderBy($sortBy, $sortOrder)
-            ->simplePaginate(10);
+        $categories = $this->categoryService->getCategoriesWithFilter($search, $sortBy, $sortOrder);
 
-        return view('admin.show.categories', [
-            'categories' => $categories,
-            'search' => $search,
-            'sortBy' => $sortBy,
-            'sortOrder' => $sortOrder
-        ]);
+        return view('admin.show.categories', compact('categories', 'search', 'sortBy', 'sortOrder'));
     }
 
-    public function createCategory()
+    public function createCategory(): View
     {
         return view('admin.create.category');
     }
 
-    public function storeCategory(StoreCategoryRequest $request)
+    public function storeCategory(StoreCategoryRequest $request): RedirectResponse
     {
-        Category::create(['name' => $request->validated()['name']]);
+        $this->categoryService->createCategory($request->validated());
 
         return redirect()->route('admin.getCategories');
     }
 
-    public function editCategory($id)
+    public function editCategory(int $id): View
     {
-        $category = Category::findOrFail($id);
+        $category = $this->categoryService->getCategoryById($id);
 
-        return view('admin.edit.category', ['category' => $category]);
+        return view('admin.edit.category', compact('category'));
     }
 
-    public function updateCategory(UpdateCategoryRequest $request, $id)
+    public function updateCategory(UpdateCategoryRequest $request, int $id): RedirectResponse
     {
-        $category = Category::findOrFail($id);
+        $category = $this->categoryService->getCategoryById($id);
 
-        $category->update(['name' => $request->validated()['name']]);
+        $this->categoryService->updateCategory($category, $request->validated());
 
         return redirect()->route('admin.getCategories');
     }
 
-    public function deleteCategory($id)
+    public function deleteCategory(int $id): RedirectResponse
     {
-        $category = Category::findOrFail($id);
+        $category = $this->categoryService->getCategoryById($id);
 
-        $category->delete();
+        $this->categoryService->deleteCategory($category);
 
         return redirect()->route('admin.getCategories');
     }

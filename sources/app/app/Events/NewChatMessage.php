@@ -13,12 +13,9 @@ class NewChatMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $chatMessage;
-
-    public function __construct(ChatMessage $chatMessage)
-    {
-        $this->chatMessage = $chatMessage;
-    }
+    public function __construct(
+        public ChatMessage $chatMessage
+    ) {}
 
     public function broadcastOn(): array
     {

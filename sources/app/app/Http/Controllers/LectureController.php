@@ -6,76 +6,64 @@ use App\Http\Requests\Lecture\StoreLectureRequest;
 use App\Http\Requests\Lecture\UpdateLectureRequest;
 use App\Models\Course;
 use App\Models\Lecture;
-use App\Models\LectureFile;
+use App\Services\LectureService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class LectureController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected LectureService $lectureService
+    ) {}
+
+    public function index(Request $request): View
     {
         $search = $request->input('search');
         $sortBy = $request->input('sortBy', 'id');
         $sortOrder = $request->input('sortOrder', 'asc');
 
-        $lectures = Lecture::when($search, function ($query, $search) {
-            $query->where('title', 'like', '%' . $search . '%');
-        })
-            ->select('id', 'title', 'video_id', 'created_by')
-            ->orderBy($sortBy, $sortOrder)
-            ->simplePaginate(10);
+        $lectures = $this->lectureService->getLectures($search, $sortBy, $sortOrder);
 
-        return view('admin.show.lectures', [
-            'lectures' => $lectures,
-            'search' => $search,
-            'sortBy' => $sortBy,
-            'sortOrder' => $sortOrder
-        ]);
+        return view('admin.show.lectures', compact('lectures', 'search', 'sortBy', 'sortOrder'));
     }
 
-    public function showLecture($courseSlug, $lectureId): JsonResponse
+    public function showLecture(string $courseSlug, int $lectureId): JsonResponse
     {
         Course::where('slug', $courseSlug)->firstOrFail();
+
         $lecture = Lecture::with('files')->where('id', $lectureId)->firstOrFail();
 
-        return response()->json($lecture, 200);
+        return response()->json($lecture);
     }
 
-    public function createLecture()
+    public function createLecture(): View
     {
         return view('admin.create.lecture');
     }
 
-    public function storeLecture(StoreLectureRequest $request)
+    public function storeLecture(StoreLectureRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         $validated['created_by'] = auth()->id();
 
-        $lecture = Lecture::create($validated);
+        $files = $request->file('files', []);
 
-        if($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                $path = $file->store('lecture_files');
-                $lecture->files()->create([
-                    'file_path' => $path,
-                    'file_name' => $file->getClientOriginalName()
-                ]);
-            }
-        }
+        $this->lectureService->storeLecture($validated, $files);
 
         return redirect()->route('admin.lectures');
     }
 
-    public function editLecture($lectureId)
+    public function editLecture($lectureId): View
     {
         $lecture = Lecture::with('files')->findOrFail($lectureId);
 
         return view('admin.edit.lecture', ['lecture' => $lecture]);
     }
 
-    public function updateLecture(UpdateLectureRequest $request, $lectureId)
+    public function updateLecture(UpdateLectureRequest $request, int $lectureId): RedirectResponse
     {
         $lecture = Lecture::findOrFail($lectureId);
 
@@ -83,49 +71,28 @@ class LectureController extends Controller
 
         $validated = $request->validated();
 
-        $lecture->update([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'video_id' => $validated['video_id'],
-        ]);
+        $files = $request->file('files', []);
 
-        if ($request->has('delete_files')) {
-            foreach ($request->delete_files as $fileId) {
-                $file = LectureFile::findOrFail($fileId);
+        $filesToDelete = $request->input('delete_files', []);
+        $deleteFiles = array_map('intval', $filesToDelete);
 
-                if (Storage::exists($file->file_path)) {
-                    Storage::delete($file->file_path);
-                }
-
-                $file->delete();
-            }
-        }
-
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                $path = $file->store('lecture_files');
-                $lecture->files()->create([
-                    'file_path' => $path,
-                    'file_name' => $file->getClientOriginalName()
-                ]);
-            }
-        }
+        $this->lectureService->updateLecture($lecture, $validated, $files, $deleteFiles);
 
         return redirect()->route('admin.lectures');
     }
 
-    public function deleteLecture($lectureId)
+    public function deleteLecture(int $lectureId): RedirectResponse
     {
         $lecture = Lecture::findOrFail($lectureId);
 
         $this->authorize('delete', $lecture);
 
-        $lecture->delete();
+        $this->lectureService->deleteLecture($lecture);
 
         return redirect()->route('admin.lectures');
     }
 
-    public function markLectureAsViewed($courseSlug, $lectureId)
+    public function markLectureAsViewed($courseSlug, $lectureId): JsonResponse
     {
         $user = auth()->user();
         $course = Course::where('slug', $courseSlug)->firstOrFail();
@@ -135,6 +102,6 @@ class LectureController extends Controller
             $user->viewedLectures()->attach($lecture->id);
         }
 
-        return response()->noContent();
+        return response()->json(null, 204);
     }
 }

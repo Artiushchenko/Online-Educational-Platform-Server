@@ -7,134 +7,97 @@ use App\Http\Requests\Course\UpdateCourseRequest;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Lecture;
+use App\Services\CourseService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class CourseController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected CourseService $courseService
+    ) {}
+
+    public function index(Request $request): View
     {
         $search = $request->input('search');
         $sortBy = $request->input('sortBy', 'id');
         $sortOrder = $request->input('sortOrder', 'asc');
 
-        $courses = Course::with('creator:id,name')
-            ->when($search, function ($query, $search) {
-                $query->where('slug', 'like', '%' . $search . '%');
-            })
-            ->select('id', 'title', 'slug', 'created_by')
-            ->orderBy($sortBy, $sortOrder)
-            ->simplePaginate(10);
+        $courses = $this->courseService->getCourses($search, $sortBy, $sortOrder);
 
-        return view('admin.show.courses', [
-            'courses' => $courses,
-            'search' => $search,
-            'sortBy' => $sortBy,
-            'sortOrder' => $sortOrder
-        ]);
+        return view('admin.show.courses', compact('courses', 'search', 'sortBy', 'sortOrder'));
     }
 
     public function showCoursesList(Request $request): JsonResponse
     {
-        $query = Course::with('categories');
+        $categoryIds = $request->get('category_ids');
 
-        if ($request->has('category_ids')) {
-            $categoryIds = $request->get('category_ids');
-
-            if (is_array($categoryIds)) {
-                $query->whereHas('categories', function ($q) use ($categoryIds) {
-                    $q->whereIn('id', $categoryIds);
-                });
-            } else {
-                $categoryIds = explode(',', $categoryIds);
-                $query->whereHas('categories', function ($q) use ($categoryIds) {
-                    $q->whereIn('id', $categoryIds);
-                });
-            }
+        if (is_string($categoryIds)) {
+            $categoryIds = explode(',', $categoryIds);
         }
 
-        $courses = $query->get();
+        $courses = $this->courseService->getCoursesByCategories($categoryIds);
 
-        return response()->json($courses, 200);
+        return response()->json($courses);
     }
 
     public function showCourse($courseSlug): JsonResponse
     {
-        $course = Course::with('lectures')->where('slug', $courseSlug)->first();
+        $course = $this->courseService->getCourseBySlug($courseSlug);
 
-        return response()->json($course, 200);
+        return response()->json($course);
     }
 
-    public function createCourse()
+    public function createCourse(): View
     {
         $lectures = Lecture::all();
         $categories = Category::all();
 
-        return view('admin.create.course', [
-            'lectures' => $lectures,
-            'categories' => $categories,
-        ]);
+        return view('admin.create.course', compact('lectures', 'categories'));
     }
 
-    public function storeCourse(StoreCourseRequest $request)
+    public function storeCourse(StoreCourseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
-        $course = Course::create([
-            'title' => $validated['title'],
-            'slug' => $validated['slug'],
-            'created_by' => Auth::id()
-        ]);
-
-        $course->lectures()->sync($validated['lectures']);
-        $course->categories()->sync($validated['categories']);
+        $this->courseService->storeCourse($validated);
 
         return redirect()->route('admin.courses');
     }
 
-    public function editCourse($courseSlug)
+    public function editCourse(string $courseSlug): View
     {
-        $course = Course::with(['lectures', 'categories'])->where('slug', $courseSlug)->first();
+        $course = $this->courseService->getCourseBySlug($courseSlug);
+
         $lectures = Lecture::all();
+
         $categories = Category::all();
 
-        return view('admin.edit.course', [
-            'course' => $course,
-            'lectures' => $lectures,
-            'categories' => $categories,
-        ]);
+        return view('admin.edit.course', compact('course', 'lectures', 'categories'));
     }
 
-    public function updateCourse(UpdateCourseRequest $request, $courseSlug)
+    public function updateCourse(UpdateCourseRequest $request, string $courseSlug): RedirectResponse
     {
-        $course = Course::where('slug', $courseSlug)->firstOrFail();
+        $course = $this->courseService->getCourseBySlug($courseSlug);
 
         $this->authorize('update', $course);
 
         $validated = $request->validated();
 
-        $course->update([
-            'title' => $validated['title'],
-            'slug' => $validated['slug'],
-        ]);
-
-        $course->lectures()->sync($validated['lectures']);
-        $course->categories()->sync($validated['categories']);
+        $this->courseService->updateCourse($course, $validated);
 
         return redirect()->route('admin.courses');
     }
 
-    public function deleteCourse($id)
+    public function deleteCourse(int $id): RedirectResponse
     {
-        $course = Course::find($id);
+        $course = Course::findOrFail($id);
 
         $this->authorize('delete', $course);
 
-        $course->lectures()->detach();
-        $course->categories()->detach();
-
-        $course->delete();
+        $this->courseService->deleteCourse($course);
 
         return redirect()->route('admin.courses');
     }
@@ -143,12 +106,8 @@ class CourseController extends Controller
     {
         $search = $request->input('search', '');
 
-        $courses = Course::query()
-            ->where('title', 'like', '%' . $search . '%')
-            ->select('id', 'title', 'slug')
-            ->limit(5)
-            ->get();
+        $courses = $this->courseService->searchCourses($search);
 
-        return response()->json($courses, 200);
+        return response()->json($courses);
     }
 }

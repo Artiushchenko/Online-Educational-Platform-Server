@@ -12,14 +12,10 @@ class ReportGenerated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $userId;
-    public $fileName;
-
-    public function __construct($userId, $fileName)
-    {
-        $this->userId = $userId;
-        $this->fileName = $fileName;
-    }
+    public function __construct(
+        public int $userId,
+        public string $fileName
+    ) {}
 
     public function broadcastOn(): array
     {
