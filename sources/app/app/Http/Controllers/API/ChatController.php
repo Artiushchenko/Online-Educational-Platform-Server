@@ -34,6 +34,6 @@ class ChatController extends Controller
             $request->input('message')
         );
 
-        return response()->json($newMessage);
+        return response()->json($newMessage, 201);
     }
 }

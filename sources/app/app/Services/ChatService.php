@@ -27,11 +27,13 @@ class ChatService
 
     public function createNewMessage(int $roomId, string $message): ChatMessage
     {
-        $newMessage = ChatMessage::create([
-            'user_id' => Auth::id(),
-            'chat_room_id' => $roomId,
-            'message' => $message,
-        ]);
+        $newMessage = new ChatMessage();
+
+        $newMessage->user_id = Auth::id();
+        $newMessage->chat_room_id = $roomId;
+        $newMessage->message = $message;
+
+        $newMessage->save();
 
         broadcast(new NewChatMessage($newMessage))->toOthers();
 
