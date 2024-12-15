@@ -9,7 +9,7 @@ class ChatServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(ChatService::class, function () {
+        $this->app->bind(ChatService::class, function () {
             return new ChatService();
         });
     }

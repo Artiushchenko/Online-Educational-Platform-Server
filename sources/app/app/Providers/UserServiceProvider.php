@@ -9,7 +9,7 @@ class UserServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(UserService::class, function () {
+        $this->app->bind(UserService::class, function () {
             return new UserService();
         });
     }

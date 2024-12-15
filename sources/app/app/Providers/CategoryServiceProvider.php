@@ -9,7 +9,7 @@ class CategoryServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(CategoryService::class, function () {
+        $this->app->bind(CategoryService::class, function () {
             return new CategoryService();
         });
     }

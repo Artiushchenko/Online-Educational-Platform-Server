@@ -9,7 +9,7 @@ class PDFReportServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(PDFReportService::class, function () {
+        $this->app->bind(PDFReportService::class, function () {
             return new PDFReportService();
         });
     }

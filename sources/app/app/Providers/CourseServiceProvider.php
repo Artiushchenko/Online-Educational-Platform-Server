@@ -9,7 +9,7 @@ class CourseServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(CourseService::class, function () {
+        $this->app->bind(CourseService::class, function () {
             return new CourseService();
         });
     }
